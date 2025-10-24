@@ -226,3 +226,333 @@ body.dark-theme input{
   .theme-toggle-btn{ top: 14px; right: 14px; width: 44px; height: 44px; }
   .theme-toggle-btn img{ width: 22px; height: 22px; }
 }
+
+/* --- Badge do logo EduConnect (fixo no topo esquerdo) --- */
+.brand-badge{
+  position: fixed;
+  top: 16px;       /* topo */
+  left: 16px;      /* esquerda */
+  bottom: auto;    /* garante que NÃO fica embaixo */
+  z-index: 1200;
+  opacity: 0.95;
+  transition: transform .15s ease, opacity .15s ease;
+}
+.brand-badge:hover{ transform: scale(1.03); opacity: 1; }
+
+/* definindo tamanho */
+
+.brand-badge img{
+  width: 240px;   /* antes 150px */
+  height: 80px;   /* antes 50px */
+  object-fit: contain;
+  display: block;
+}
+
+/* alternância de tema via classe no body */
+.brand-badge .logo-dark{ display: none; }
+body.dark-theme .brand-badge .logo-dark{ display: block; }
+body.dark-theme .brand-badge .logo-light{ display: none; }
+
+/* responsivo: reduz em telas menores */
+@media (max-width: 720px){
+  .brand-badge img{
+    width: 190px;
+    height: 62px;
+  }
+}
+
+/* ===== Notificações (dashboard) ===== */
+.notif-form{
+  display: grid;
+  grid-template-columns: 1fr 200px;
+  gap: 10px;
+  margin: 10px 0 12px;
+}
+.notif-form textarea{
+  grid-column: 1 / -1;
+  resize: vertical;
+  min-height: 64px;
+}
+.notif-toolbar{
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin: 4px 0 12px;
+}
+.notif-toolbar input, .notif-toolbar select{
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid var(--gray-200);
+  background: var(--white);
+}
+.notif-toolbar button{
+  padding: 10px 14px;
+  border-radius: 10px;
+}
+body.dark-theme .notif-toolbar input,
+body.dark-theme .notif-toolbar select{
+  background: var(--dark-elev-2);
+  color: var(--dark-text);
+  border-color: #3a3a3a;
+}
+
+.notif-list{
+  list-style: none;
+  display: grid;
+  gap: 10px;
+}
+.notif-card{
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 6px 12px;
+  padding: 12px;
+  border: 1px solid var(--gray-200);
+  border-radius: 12px;
+  background: var(--white);
+}
+.notif-card h4{ margin: 0; font-weight: 800; }
+.notif-meta{ font-size: .9rem; opacity: .7; }
+.notif-actions{ display: flex; gap: 8px; align-items: center; }
+.notif-actions button{
+  padding: 8px 10px;
+  border-radius: 10px;
+}
+body.dark-theme .notif-card{
+  background: var(--dark-elev-2);
+  border-color: #3a3a3a;
+}
+.notif-empty{ opacity: .7; margin-top: 8px; }
+
+/* ===== Ajustes do formulário de Notificações (com perfil/turma) ===== */
+
+/* Título ocupa a largura toda da grade */
+.notif-form input#notif-title{
+  grid-column: 1 / -1;
+}
+
+/* Linha com os dois selects lado a lado */
+.notif-form-row{
+  grid-column: 1 / -1;              /* a linha inteira */
+  display: grid;
+  grid-template-columns: 1fr 1fr;    /* perfil | turma */
+  gap: 10px;
+}
+
+/* Aparência dos selects do form */
+.notif-form select{
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid var(--gray-200);
+  background: var(--white);
+}
+body.dark-theme .notif-form select{
+  background: var(--dark-elev-2);
+  color: var(--dark-text);
+  border-color: #3a3a3a;
+}
+
+/* Deixa o botão "Adicionar" alinhar à direita na grade */
+.notif-form button[type="submit"]{
+  justify-self: end;
+}
+
+/* Badges (perfil e turma) na listagem */
+.notif-badges{
+  display: flex;
+  gap: 8px;
+  margin: 6px 0 4px;
+  flex-wrap: wrap;
+}
+.badge{
+  font-size: .78rem;
+  padding: 4px 8px;
+  border-radius: 999px;
+  border: 1px solid var(--gray-200);
+  background: #fff;
+}
+body.dark-theme .badge{
+  background: var(--dark-elev-2);
+  border-color: #3a3a3a;
+}
+
+/* ===== Calendário Escolar ===== */
+.cal-header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  margin:6px 0 12px;
+}
+.cal-header button{
+  padding:8px 12px;
+  border-radius:10px;
+}
+.cal-current{
+  display:flex;
+  align-items:baseline;
+  gap:8px;
+  font-weight:800;
+  font-size:1.2rem;
+}
+
+.cal-grid{
+  display:grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap:6px;
+}
+.cal-weekday{
+  text-align:center;
+  font-weight:700;
+  opacity:.8;
+  padding:6px 0;
+}
+.cal-days{
+  grid-column:1 / -1; /* ocupa as 7 colunas */
+  display:grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap:6px;
+}
+.cal-day{
+  min-height:64px;
+  border:1px solid var(--gray-200);
+  border-radius:12px;
+  background: var(--white);
+  padding:8px;
+  cursor:pointer;
+  display:flex;
+  align-items:flex-start;
+  justify-content:flex-start;
+  position:relative;
+}
+.cal-day.out{ opacity:.45; }             /* dias do mês anterior/seguinte */
+.cal-day .num{ font-weight:800; }
+.cal-day.today{
+  outline: 2px solid var(--brand-red);
+  outline-offset: 2px;
+}
+.cal-day.selected{
+  box-shadow: 0 0 0 3px rgba(215,23,47,.15) inset;
+}
+
+/* “pills” de eventos na célula (mostra até 2) */
+.cal-day .pill{
+  position:absolute;
+  left:8px;
+  bottom:8px;
+  font-size:.72rem;
+  padding:2px 6px;
+  border-radius:999px;
+  background: rgba(215,23,47,.08);
+  border:1px solid var(--gray-200);
+  max-width: calc(100% - 16px);
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+/* Área de eventos do dia */
+.cal-events{
+  margin-top:14px;
+  border-top:1px dashed var(--gray-200);
+  padding-top:12px;
+}
+.cal-events-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  margin-bottom:10px;
+}
+.cal-event-form{
+  display:flex;
+  gap:8px;
+}
+.cal-event-form input{
+  padding:10px 12px;
+  border-radius:10px;
+  border:1px solid var(--gray-200);
+  background: var(--white);
+  min-width: 220px;
+}
+.cal-event-list{
+  list-style:none;
+  display:grid;
+  gap:8px;
+}
+.cal-event-item{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  padding:10px 12px;
+  border:1px solid var(--gray-200);
+  border-radius:10px;
+  background: var(--white);
+}
+.cal-event-item .meta{
+  font-size:.86rem;
+  opacity:.7;
+}
+
+/* Dark mode */
+body.dark-theme .cal-day,
+body.dark-theme .cal-event-item,
+body.dark-theme .cal-event-form input{
+  background: var(--dark-elev-2);
+  border-color:#3a3a3a;
+  color: var(--dark-text);
+}
+body.dark-theme .cal-events{ border-top-color:#3a3a3a; }
+body.dark-theme .cal-day .pill{
+  background: rgba(215,23,47,.15);
+  border-color:#3a3a3a;
+}
+
+/* --- Notificações: layout do form com botão à direita da mensagem --- */
+.notif-form{
+  display:grid;
+  grid-template-columns: 1fr 200px; /* campo grande | coluna do botão */
+  gap:10px;
+  align-items:start;
+}
+
+.notif-form input#notif-title{ grid-column:1 / -1; }     /* título ocupa toda a largura */
+.notif-form .notif-form-row{ grid-column:1 / -1; }       /* selects perfil/turma também */
+
+/* textarea na 1ª coluna; botão na 2ª coluna, alinhado na base */
+#notif-message{ grid-column:1 / 2; min-height:120px; }
+.notif-form button[type="submit"]{
+  grid-column:2 / 3;
+  align-self:end;
+  height:44px;
+  font-weight:800;
+  box-shadow:0 4px 14px rgba(215,23,47,.25);
+}
+
+/* responsivo: empilha tudo e botão vira full width */
+@media (max-width: 900px){
+  .notif-form{ grid-template-columns: 1fr; }
+  #notif-message{ grid-column:1 / -1; }
+  .notif-form button[type="submit"]{
+    grid-column:1 / -1;
+    width:100%;
+    justify-self:end; /* mantém à direita, mas você pode trocar pra center se preferir */
+  }
+}
+
+/* --- Botão "Voltar ao login" na sidebar --- */
+.logout-link{
+  display:block;
+  margin-top:16px;
+  padding:12px 14px;
+  text-align:center;
+  font-weight:800;
+  border-radius:12px;
+  background:var(--brand-red);
+  color:#fff;
+  text-decoration:none;
+  box-shadow:0 4px 14px rgba(215,23,47,.25);
+  transition:filter .18s ease, transform .06s ease;
+}
+.logout-link:hover{ filter:brightness(.95); }
+.logout-link:active{ transform:translateY(1px); }
