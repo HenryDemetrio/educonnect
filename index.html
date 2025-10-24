@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Login - Sistema Escolar</title>
+
+  <!-- Estilos globais (inclui Montserrat, tema claro/escuro, layout, etc.) -->
+  <link rel="stylesheet" href="assets/css/style.css" />
+</head>
+<body class="index-page">
+  <!-- Botão flutuante para alternar o tema (lua/sol) -->
+  <button id="theme-toggle" class="theme-toggle-btn" title="Alternar tema">
+    <img id="theme-icon"
+         src="https://cdn3.iconfinder.com/data/icons/feather-5/24/moon-512.png"
+         alt="Alternar tema" />
+  </button>
+
+  <!-- Barra de logos (tamanhos fixos definidos no CSS) -->
+  <div class="logo-bar">
+    <img src="https://tivit.com/wp-content/themes/tivit-v2/assets/images/logo-tivit-almaviva.svg"
+         alt="Logo TIVIT" />
+    <img src="https://cursos.jmarc.com.br/images/Logos/Alura_image.png"
+         alt="Logo Alura" />
+    <img src="https://i0.wp.com/innovationweeksjc.com.br/wp-content/uploads/2024/08/Artboard-1.png?fit=800%2C378&ssl=1"
+         alt="Logo FIAP" />
+  </div>
+
+  <!-- Card de Login -->
+  <div class="login-container">
+    <h1>Login</h1>
+    <form id="login-form" novalidate>
+      <label for="email">E-mail:</label>
+      <input type="email" id="email" name="email" placeholder="seuemail@exemplo.com" required />
+
+      <label for="password">Senha:</label>
+      <input type="password" id="password" name="password" placeholder="Mín. 8 caracteres, letra e número" required />
+
+      <div class="error-message" id="error-message"></div>
+
+      <button type="submit">Entrar</button>
+    </form>
+  </div>
+
+  <!-- Script da página: tema + validação simples de login -->
+  <script>
+    // --- Tema (lua/sol) ---
+    const body = document.body;
+    const toggleBtn = document.getElementById('theme-toggle');
+    const themeIcon = document.getElementById('theme-icon');
+
+    // Alterna o ícone conforme o tema atual
+    function setThemeIcon(theme) {
+      if (theme === 'dark') {
+        themeIcon.src = 'https://cdn3.iconfinder.com/data/icons/meteocons/512/sun-symbol-512.png'; // Sol
+      } else {
+        themeIcon.src = 'https://cdn3.iconfinder.com/data/icons/feather-5/24/moon-512.png'; // Lua
+      }
+    }
+
+    // Aplica tema salvo ou padrão (light)
+    (function initTheme() {
+      const saved = localStorage.getItem('preferred-theme') || 'light';
+      body.classList.remove('light-theme', 'dark-theme');
+      body.classList.add(saved + '-theme');
+      setThemeIcon(saved);
+    })();
+
+    // Clique para alternar tema e salvar preferência
+    toggleBtn.addEventListener('click', () => {
+      const newTheme = body.classList.contains('dark-theme') ? 'light' : 'dark';
+      body.classList.remove('light-theme', 'dark-theme');
+      body.classList.add(newTheme + '-theme');
+      localStorage.setItem('preferred-theme', newTheme);
+      setThemeIcon(newTheme);
+    });
+
+    // --- Validação simples do login (front-end) ---
+    // Regra: mínimo 8 caracteres, ao menos 1 letra e 1 número
+    const passRule = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
+
+    document.getElementById('login-form').addEventListener('submit', (e) => {
+      e.preventDefault();
+
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value.trim();
+      const errorDiv = document.getElementById('error-message');
+
+      // Mensagens claras de validação
+      if (!email) {
+        errorDiv.textContent = 'Informe seu e-mail.';
+        return;
+      }
+      if (!password) {
+        errorDiv.textContent = 'Informe sua senha.';
+        return;
+      }
+      if (!passRule.test(password)) {
+        errorDiv.textContent = 'A senha precisa ter no mínimo 8 caracteres, incluindo pelo menos 1 letra e 1 número.';
+        return;
+      }
+
+      // Se passou, limpa erro e simula login
+      errorDiv.textContent = '';
+      window.location.href = 'dashboard.html';
+    });
+  </script>
+</body>
+</html>

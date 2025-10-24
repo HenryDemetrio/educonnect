@@ -1,0 +1,228 @@
+/* =========================
+   FONTES + RESET
+========================= */
+/* Montserrat – sem mexer no HTML */
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Montserrat', system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+}
+
+/* =========================
+   TOKENS DE COR
+========================= */
+:root{
+  --brand-red: #d7172f;      /* TIVIT */
+  --gray-50:  #f4f4f4;
+  --gray-100: #eee;
+  --gray-200: #ddd;
+  --gray-700: #333;
+  --white:    #ffffff;
+
+  /* dark */
+  --dark-bg:      #121212;
+  --dark-elev-1:  #1a1a1a;
+  --dark-elev-2:  #232323;
+  --dark-text:    #f1f1f1;
+}
+
+/* =========================
+   TEMA (no <body>)
+========================= */
+body.light-theme{
+  background: var(--gray-50);
+  color: var(--gray-700);
+}
+body.dark-theme{
+  background: var(--dark-bg);
+  color: var(--dark-text);
+}
+
+/* =========================
+   LOGOS (login + dashboard)
+========================= */
+.logo-bar{
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 24px;
+  padding: 16px 12px;
+}
+
+/* Tamanho FIXO para todos os logos (mesmo box sempre) */
+.logo-bar img{
+  display: inline-block;
+  width: 150px;       /* <<< fixa largura */
+  height: 50px;       /* <<< fixa altura */
+  object-fit: contain;
+}
+
+/* Sem trocar a imagem da Alura: no dark só invertemos a cor
+   (mantém o MESMO tamanho, sem “pulos”) */
+body.dark-theme .logo-bar img[alt="Logo Alura"]{
+  filter: invert(1) brightness(1.2) contrast(1.05);
+}
+
+/* =========================
+   BOTÃO DE TEMA (lua/sol)
+========================= */
+.theme-toggle-btn{
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  width: 48px;
+  height: 48px;
+  border: none;
+  border-radius: 50%;
+  background: var(--brand-red);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(0,0,0,.25);
+  cursor: pointer;
+  z-index: 1000;
+  transition: transform .18s ease, filter .18s ease;
+}
+.theme-toggle-btn:hover{ transform: scale(1.06); }
+.theme-toggle-btn img{ width: 26px; height: 26px; }
+
+/* =========================
+   HEADER (dashboard)
+========================= */
+.header{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: var(--white);
+  padding: 8px 12px;
+}
+body.dark-theme .header{ background: var(--dark-elev-1); }
+
+/* =========================
+   SIDEBAR + MAIN (dashboard)
+========================= */
+.sidebar{
+  position: fixed;
+  top: 84px;
+  left: 0;
+  width: 220px;
+  padding: 20px;
+  background: var(--white);
+}
+.sidebar ul{ list-style: none; }
+.sidebar li{ margin-bottom: 12px; }
+.sidebar a{
+  color: inherit;
+  text-decoration: none;
+  font-weight: 700;
+}
+body.dark-theme .sidebar{ background: var(--dark-elev-1); }
+
+.main-content{
+  margin-left: 240px;
+  padding: 24px;
+  min-height: calc(100vh - 84px);
+  background: transparent; /* herda do body */
+}
+.panel{
+  background: var(--white);
+  border: 1px solid var(--gray-200);
+  border-radius: 12px;
+  padding: 18px;
+  margin-bottom: 18px;
+}
+body.dark-theme .panel{
+  background: var(--dark-elev-2);
+  border-color: #3a3a3a;
+}
+
+/* =========================
+   LOGIN
+========================= */
+/* Centralização REAL: duas linhas (logos em cima, card central) */
+body.index-page{
+  min-height: 100vh;
+  display: grid;
+  grid-template-rows: auto 1fr; /* logos (auto) + card (preenche) */
+}
+
+/* garante logos centralizadas também no login */
+body.index-page .logo-bar{ justify-content: center; }
+
+.login-container{
+  place-self: center;       /* centra na grid */
+  width: min(92vw, 480px);
+  background: var(--white);
+  border-radius: 16px;
+  padding: 28px 24px;
+  box-shadow: 0 16px 40px rgba(0,0,0,.12);
+}
+.login-container h1{
+  font-size: 2.2rem;
+  font-weight: 800;
+  margin-bottom: 16px;
+  text-align: center;   /* << centraliza o texto do título */
+}
+form{ display: flex; flex-direction: column; gap: 12px; }
+label{ font-weight: 700; }
+
+input{
+  width: 100%;
+  padding: 12px 10px;
+  border-radius: 10px;
+  border: 1px solid var(--gray-200);
+  background: var(--white);
+  outline: none;
+}
+input:focus{ border-color: var(--brand-red); box-shadow: 0 0 0 3px rgba(215,23,47,.15); }
+
+button{
+  padding: 14px 16px;
+  border: none;
+  border-radius: 12px;
+  background: var(--brand-red);
+  color: var(--white);
+  font-weight: 800;
+  letter-spacing: .2px;
+  cursor: pointer;
+  transition: filter .18s ease, transform .06s ease;
+}
+button:hover{ filter: brightness(.95); }
+button:active{ transform: translateY(1px); }
+
+.error-message{
+  color: #d32f2f;
+  font-size: .95rem;
+  margin-top: -6px;
+}
+
+/* Login – Dark */
+body.dark-theme.index-page{ background: var(--dark-bg); }
+body.dark-theme .login-container{
+  background: var(--dark-elev-1);
+  box-shadow: 0 16px 40px rgba(0,0,0,.5);
+}
+body.dark-theme input{
+  background: var(--dark-elev-2);
+  color: var(--dark-text);
+  border-color: #3a3a3a;
+}
+
+/* =========================
+   RESPONSIVO
+========================= */
+@media (max-width: 720px){
+  .sidebar{ position: static; width: 100%; margin-bottom: 12px; }
+  .main-content{ margin-left: 0; }
+  .header{ padding-right: 64px; } /* espaço pro botão de tema */
+}
+
+@media (max-width: 420px){
+  .logo-bar img{ width: 120px; height: 40px; }
+  .theme-toggle-btn{ top: 14px; right: 14px; width: 44px; height: 44px; }
+  .theme-toggle-btn img{ width: 22px; height: 22px; }
+}

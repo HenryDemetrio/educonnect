@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Dashboard - Sistema Escolar</title>
+  <link rel="stylesheet" href="assets/css/style.css" />
+</head>
+<body>
+  <!-- Botão flutuante de tema (lua/sol) -->
+  <button id="theme-toggle" class="theme-toggle-btn" title="Alternar tema">
+    <img id="theme-icon"
+         src="https://cdn3.iconfinder.com/data/icons/feather-5/24/moon-512.png"
+         alt="Alternar tema" />
+  </button>
+
+  <!-- Header com logos centralizadas -->
+  <header class="header">
+    <div class="logo-bar">
+      <img src="https://tivit.com/wp-content/themes/tivit-v2/assets/images/logo-tivit-almaviva.svg" alt="Logo TIVIT" />
+      <img src="https://cursos.jmarc.com.br/images/Logos/Alura_image.png" alt="Logo Alura" />
+      <img src="https://i0.wp.com/innovationweeksjc.com.br/wp-content/uploads/2024/08/Artboard-1.png?fit=800%2C378&ssl=1" alt="Logo FIAP" />
+    </div>
+  </header>
+
+  <!-- Navegação lateral -->
+  <nav class="sidebar">
+    <ul>
+      <li><a href="dashboard.html">Início</a></li>
+      <li><a href="students.html">Alunos</a></li>
+      <li><a href="add_student.html">Cadastrar Aluno</a></li>
+      <li><a href="teachers.html">Professores</a></li>
+      <li><a href="add_teacher.html">Cadastrar Professor</a></li>
+    </ul>
+  </nav>
+
+  <!-- Conteúdo principal -->
+  <main class="main-content">
+    <section class="panel">
+      <h2>Gráfico de Desempenho</h2>
+      <!-- Canvas do gráfico (substitui o placeholder) -->
+      <div style="height: 320px;">
+        <canvas id="chartAlunosPorTurma"></canvas>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2>Notificações</h2>
+      <div class="placeholder">[Lista de notificações aqui]</div>
+    </section>
+
+    <section class="panel">
+      <h2>Calendário Escolar</h2>
+      <div class="placeholder">[Calendário interativo aqui]</div>
+    </section>
+  </main>
+
+  <!-- CDN Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <!-- Script: tema (lua/sol) + gráfico que reage ao tema e ao localStorage -->
+  <script>
+    /* ========= TEMA (lua/sol) ========= */
+    const body = document.body;
+    const toggleBtn = document.getElementById('theme-toggle');
+    const themeIcon = document.getElementById('theme-icon');
+
+    function setThemeIcon(theme) {
+      themeIcon.src = (theme === 'dark')
+        ? 'https://cdn3.iconfinder.com/data/icons/meteocons/512/sun-symbol-512.png'  // Sol
+        : 'https://cdn3.iconfinder.com/data/icons/feather-5/24/moon-512.png';       // Lua
+    }
+
+    (function initTheme() {
+      const saved = localStorage.getItem('preferred-theme') || 'light';
+      body.classList.remove('light-theme','dark-theme');
+      body.classList.add(saved + '-theme');
+      setThemeIcon(saved);
+    })();
+
+    toggleBtn.addEventListener('click', () => {
+      const newTheme = body.classList.contains('dark-theme') ? 'light' : 'dark';
+      body.classList.remove('light-theme','dark-theme');
+      body.classList.add(newTheme + '-theme');
+      localStorage.setItem('preferred-theme', newTheme);
+      setThemeIcon(newTheme);
+      updateChartTheme(newTheme); // atualiza paleta do gráfico ao trocar tema
+    });
+
+    /* ========= GRÁFICO (Alunos por Turma) ========= */
+    const TURMAS = ['1A','1B','2A','2B','3A','3B'];
+
+    function getAlunos() {
+      try { return JSON.parse(localStorage.getItem('alunos') || '[]'); }
+      catch { return []; }
+    }
+
+    function contarPorTurma() {
+      const alunos = getAlunos();
+      return TURMAS.map(t => alunos.filter(a => a.turma === t).length);
+    }
+
+    function themeColors(theme) {
+      return {
+        bg: 'rgba(215, 23, 47, 0.25)',           // barra com transparência
+        border: '#d7172f',                        // vermelho TIVIT
+        grid: theme === 'dark' ? '#333' : '#e5e5e5',
+        ticks: theme === 'dark' ? '#eeeeee' : '#333333'
+      };
+    }
+
+    let chartRef = null;
+
+    function renderChart() {
+      const ctx = document.getElementById('chartAlunosPorTurma').getContext('2d');
+      const theme = body.classList.contains('dark-theme') ? 'dark' : 'light';
+      const colors = themeColors(theme);
+
+      const data = {
+        labels: TURMAS,
+        datasets: [{
+          label: 'Alunos por Turma',
+          data: contarPorTurma(),
+          backgroundColor: colors.bg,
+          borderColor: colors.border,
+          borderWidth: 2,
+          borderRadius: 6
+        }]
+      };
+
+      const options = {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { labels: { color: colors.ticks, font: { weight: 'bold' } } },
+          tooltip: {
+            callbacks: { label: (ctx) => ` ${ctx.parsed.y} aluno(s)` }
+          }
+        },
+        scales: {
+          x: { ticks: { color: colors.ticks }, grid: { color: colors.grid } },
+          y: { beginAtZero: true, ticks: { color: colors.ticks, precision: 0 }, grid: { color: colors.grid } }
+        }
+      };
+
+      if (chartRef) chartRef.destroy();
+      chartRef = new Chart(ctx, { type: 'bar', data, options });
+    }
+
+    function updateChartTheme(theme) {
+      if (!chartRef) return;
+      const colors = themeColors(theme);
+      chartRef.data.datasets[0].backgroundColor = colors.bg;
+      chartRef.data.datasets[0].borderColor = colors.border;
+      chartRef.options.plugins.legend.labels.color = colors.ticks;
+      chartRef.options.scales.x.ticks.color = colors.ticks;
+      chartRef.options.scales.x.grid.color = colors.grid;
+      chartRef.options.scales.y.ticks.color = colors.ticks;
+      chartRef.options.scales.y.grid.color = colors.grid;
+      chartRef.update();
+    }
+
+    // Renderiza ao carregar
+    window.addEventListener('load', renderChart);
+
+    // Re-render quando a aba volta ao foco (ex.: após cadastrar aluno)
+    window.addEventListener('focus', renderChart);
+  </script>
+</body>
+</html>

@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Alunos - Sistema Escolar</title>
+  <link rel="stylesheet" href="assets/css/style.css"/>
+</head>
+<body>
+  <!-- Botão tema -->
+  <button id="theme-toggle" class="theme-toggle-btn" title="Alternar tema">
+    <img id="theme-icon"
+         src="https://cdn3.iconfinder.com/data/icons/feather-5/24/moon-512.png"
+         alt="Alternar tema" />
+  </button>
+
+  <!-- Header com logos -->
+  <header class="header">
+    <div class="logo-bar">
+      <img src="https://tivit.com/wp-content/themes/tivit-v2/assets/images/logo-tivit-almaviva.svg" alt="Logo TIVIT"/>
+      <img src="https://cursos.jmarc.com.br/images/Logos/Alura_image.png" alt="Logo Alura"/>
+      <img src="https://i0.wp.com/innovationweeksjc.com.br/wp-content/uploads/2024/08/Artboard-1.png?fit=800%2C378&ssl=1" alt="Logo FIAP"/>
+    </div>
+  </header>
+
+  <!-- Menu lateral -->
+  <nav class="sidebar">
+    <ul>
+      <li><a href="dashboard.html">Início</a></li>
+      <li><a href="students.html">Alunos</a></li>
+      <li><a href="add_student.html">Cadastrar Aluno</a></li>
+      <li><a href="teachers.html">Professores</a></li>
+      <li><a href="add_teacher.html">Cadastrar Professor</a></li>
+    </ul>
+  </nav>
+
+  <main class="main-content">
+    <section class="panel">
+      <h2>Lista de Alunos</h2>
+
+      <!-- Filtros -->
+      <div style="display:flex; gap:12px; margin:12px 0 16px;">
+        <input type="text" id="filtro-nome" placeholder="Filtrar por nome..." style="flex:1; padding:10px; border-radius:8px; border:1px solid #ddd;"/>
+        <select id="filtro-turma" style="padding:10px; border-radius:8px; border:1px solid #ddd;">
+          <option value="">Todas as turmas</option>
+          <option value="1A">1º Ano - A</option>
+          <option value="1B">1º Ano - B</option>
+          <option value="2A">2º Ano - A</option>
+          <option value="2B">2º Ano - B</option>
+          <option value="3A">3º Ano - A</option>
+          <option value="3B">3º Ano - B</option>
+        </select>
+        <button id="btn-limpar" style="padding:10px 14px; border-radius:8px;">Limpar</button>
+      </div>
+
+      <!-- Tabela -->
+      <div style="overflow:auto;">
+        <table id="tabela-alunos" style="width:100%; border-collapse:collapse;">
+          <thead>
+            <tr style="text-align:left;">
+              <th style="padding:10px; border-bottom:1px solid #ddd;">Nome</th>
+              <th style="padding:10px; border-bottom:1px solid #ddd;">E-mail</th>
+              <th style="padding:10px; border-bottom:1px solid #ddd;">RA</th>
+              <th style="padding:10px; border-bottom:1px solid #ddd;">Turma</th>
+              <th style="padding:10px; border-bottom:1px solid #ddd;">Nascimento</th>
+              <th style="padding:10px; border-bottom:1px solid #ddd;">Telefone</th>
+              <th style="padding:10px; border-bottom:1px solid #ddd;">Ações</th>
+            </tr>
+          </thead>
+          <tbody id="tbody-alunos">
+            <!-- linhas geradas via JS -->
+          </tbody>
+        </table>
+      </div>
+
+      <p id="empty-msg" style="margin-top:14px; display:none;">Nenhum aluno cadastrado ainda.</p>
+    </section>
+  </main>
+
+  <script>
+    /* ====== TEMA (lua/sol) ====== */
+    const body = document.body;
+    const toggleBtn = document.getElementById('theme-toggle');
+    const themeIcon = document.getElementById('theme-icon');
+    function setThemeIcon(theme) {
+      themeIcon.src = (theme === 'dark')
+        ? 'https://cdn3.iconfinder.com/data/icons/meteocons/512/sun-symbol-512.png'
+        : 'https://cdn3.iconfinder.com/data/icons/feather-5/24/moon-512.png';
+    }
+    (function initTheme() {
+      const saved = localStorage.getItem('preferred-theme') || 'light';
+      body.classList.remove('light-theme','dark-theme');
+      body.classList.add(saved + '-theme');
+      setThemeIcon(saved);
+    })();
+    toggleBtn.addEventListener('click', () => {
+      const newTheme = body.classList.contains('dark-theme') ? 'light' : 'dark';
+      body.classList.remove('light-theme','dark-theme');
+      body.classList.add(newTheme + '-theme');
+      localStorage.setItem('preferred-theme', newTheme);
+      setThemeIcon(newTheme);
+    });
+
+    /* ====== LISTA / FILTROS ====== */
+    const tbody = document.getElementById('tbody-alunos');
+    const emptyMsg = document.getElementById('empty-msg');
+    const filtroNome = document.getElementById('filtro-nome');
+    const filtroTurma = document.getElementById('filtro-turma');
+    const btnLimpar = document.getElementById('btn-limpar');
+
+    function getAlunos(){
+      return JSON.parse(localStorage.getItem('alunos') || '[]');
+    }
+
+    function setAlunos(lista){
+      localStorage.setItem('alunos', JSON.stringify(lista));
+    }
+
+    function renderTabela(lista){
+      tbody.innerHTML = '';
+      if (!lista.length){
+        emptyMsg.style.display = 'block';
+        return;
+      }
+      emptyMsg.style.display = 'none';
+
+      for (const a of lista){
+        const tr = document.createElement('tr');
+
+        const tdNome = document.createElement('td'); tdNome.textContent = a.nome;
+        const tdEmail = document.createElement('td'); tdEmail.textContent = a.email;
+        const tdRa = document.createElement('td'); tdRa.textContent = a.ra;
+        const tdTurma = document.createElement('td'); tdTurma.textContent = a.turma;
+        const tdNasc = document.createElement('td'); tdNasc.textContent = a.nascimento || '-';
+        const tdTel = document.createElement('td'); tdTel.textContent = a.telefone || '-';
+
+        const tdAcoes = document.createElement('td');
+        const btnDel = document.createElement('button');
+        btnDel.textContent = 'Excluir';
+        btnDel.style.padding = '6px 10px';
+        btnDel.style.borderRadius = '8px';
+        btnDel.addEventListener('click', () => {
+          const confirmDel = confirm(`Excluir aluno ${a.nome}?`);
+          if (!confirmDel) return;
+          const atual = getAlunos().filter(x => x.id !== a.id);
+          setAlunos(atual);
+          aplicarFiltros(); // re-render
+        });
+        tdAcoes.appendChild(btnDel);
+
+        [tdNome,tdEmail,tdRa,tdTurma,tdNasc,tdTel,tdAcoes].forEach(td => {
+          td.style.padding = '10px';
+          td.style.borderBottom = '1px solid #eee';
+          tr.appendChild(td);
+        });
+
+        tbody.appendChild(tr);
+      }
+    }
+
+    function aplicarFiltros(){
+      const nome = filtroNome.value.trim().toLowerCase();
+      const turma = filtroTurma.value;
+      let lista = getAlunos();
+
+      if (nome) lista = lista.filter(a => a.nome?.toLowerCase().includes(nome));
+      if (turma) lista = lista.filter(a => a.turma === turma);
+
+      renderTabela(lista);
+    }
+
+    filtroNome.addEventListener('input', aplicarFiltros);
+    filtroTurma.addEventListener('change', aplicarFiltros);
+    btnLimpar.addEventListener('click', () => {
+      filtroNome.value = '';
+      filtroTurma.value = '';
+      aplicarFiltros();
+    });
+
+    // Inicializa tabela
+    aplicarFiltros();
+  </script>
+</body>
+</html>

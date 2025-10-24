@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Cadastrar Aluno - Sistema Escolar</title>
+  <link rel="stylesheet" href="assets/css/style.css" />
+</head>
+<body>
+  <!-- Botão flutuante de tema (lua/sol) -->
+  <button id="theme-toggle" class="theme-toggle-btn" title="Alternar tema">
+    <img id="theme-icon"
+         src="https://cdn3.iconfinder.com/data/icons/feather-5/24/moon-512.png"
+         alt="Alternar tema" />
+  </button>
+
+  <!-- Header com logos -->
+  <header class="header">
+    <div class="logo-bar">
+      <img src="https://tivit.com/wp-content/themes/tivit-v2/assets/images/logo-tivit-almaviva.svg"
+           alt="Logo TIVIT" />
+      <img src="https://cursos.jmarc.com.br/images/Logos/Alura_image.png"
+           alt="Logo Alura" />
+      <img src="https://i0.wp.com/innovationweeksjc.com.br/wp-content/uploads/2024/08/Artboard-1.png?fit=800%2C378&ssl=1"
+           alt="Logo FIAP" />
+    </div>
+  </header>
+
+  <!-- Navegação lateral -->
+  <nav class="sidebar">
+    <ul>
+      <li><a href="dashboard.html">Início</a></li>
+      <li><a href="students.html">Alunos</a></li>
+      <li><a href="add_student.html">Cadastrar Aluno</a></li>
+      <li><a href="teachers.html">Professores</a></li>
+      <li><a href="add_teacher.html">Cadastrar Professor</a></li>
+    </ul>
+  </nav>
+
+  <!-- Conteúdo principal -->
+  <main class="main-content">
+    <section class="panel">
+      <h2>Cadastrar Aluno</h2>
+
+      <form id="student-form" novalidate>
+        <!-- Nome -->
+        <label for="nome">Nome completo</label>
+        <input type="text" id="nome" name="nome" placeholder="Ex.: Ana Clara Souza" required />
+        <div class="error-message" id="err-nome"></div>
+
+        <!-- Email -->
+        <label for="email">E-mail</label>
+        <input type="email" id="email" name="email" placeholder="aluno@exemplo.com" required />
+        <div class="error-message" id="err-email"></div>
+
+        <!-- RA/Matrícula -->
+        <label for="ra">Matrícula (RA)</label>
+        <input type="text" id="ra" name="ra" inputmode="numeric" placeholder="Somente números" required />
+        <div class="error-message" id="err-ra"></div>
+
+        <!-- Turma/Curso -->
+        <label for="turma">Turma</label>
+        <select id="turma" name="turma" required>
+          <option value="">Selecione...</option>
+          <option value="1A">1º Ano - A</option>
+          <option value="1B">1º Ano - B</option>
+          <option value="2A">2º Ano - A</option>
+          <option value="2B">2º Ano - B</option>
+          <option value="3A">3º Ano - A</option>
+          <option value="3B">3º Ano - B</option>
+        </select>
+        <div class="error-message" id="err-turma"></div>
+
+        <!-- Data de nascimento (opcional) -->
+        <label for="nascimento">Data de nascimento (opcional)</label>
+        <input type="date" id="nascimento" name="nascimento" />
+        <div class="error-message" id="err-nascimento"></div>
+
+        <!-- Telefone (opcional) -->
+        <label for="telefone">Telefone (opcional)</label>
+        <input type="tel" id="telefone" name="telefone" placeholder="(11) 90000-0000" />
+        <div class="error-message" id="err-telefone"></div>
+
+        <button type="submit">Salvar</button>
+      </form>
+    </section>
+  </main>
+
+  <!-- Script: tema + validação + salvamento local -->
+  <script>
+    /* ====== TEMA (lua/sol) ====== */
+    const body = document.body;
+    const toggleBtn = document.getElementById('theme-toggle');
+    const themeIcon = document.getElementById('theme-icon');
+
+    function setThemeIcon(theme) {
+      themeIcon.src = (theme === 'dark')
+        ? 'https://cdn3.iconfinder.com/data/icons/meteocons/512/sun-symbol-512.png'  // Sol
+        : 'https://cdn3.iconfinder.com/data/icons/feather-5/24/moon-512.png';       // Lua
+    }
+
+    (function initTheme() {
+      const saved = localStorage.getItem('preferred-theme') || 'light';
+      body.classList.remove('light-theme', 'dark-theme');
+      body.classList.add(saved + '-theme');
+      setThemeIcon(saved);
+    })();
+
+    toggleBtn.addEventListener('click', () => {
+      const newTheme = body.classList.contains('dark-theme') ? 'light' : 'dark';
+      body.classList.remove('light-theme', 'dark-theme');
+      body.classList.add(newTheme + '-theme');
+      localStorage.setItem('preferred-theme', newTheme);
+      setThemeIcon(newTheme);
+    });
+
+    /* ====== VALIDAÇÃO + SALVAR NO LOCALSTORAGE ====== */
+    const form = document.getElementById('student-form');
+
+    // Regras simples
+    const emailRule = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+    const raRule = /^\d{4,}$/; // pelo menos 4 dígitos
+    const phoneRule = /^\(?\d{2}\)?\s?\d{4,5}-?\d{4}$/; // (11) 90000-0000 ou variações
+
+    // Helpers para erro
+    function setError(id, msg) {
+      document.getElementById(id).textContent = msg || '';
+    }
+    function clearErrors() {
+      ['err-nome','err-email','err-ra','err-turma','err-nascimento','err-telefone']
+        .forEach(id => setError(id, ''));
+    }
+
+    // Validação em tempo real
+    document.getElementById('nome').addEventListener('input', e => {
+      setError('err-nome', e.target.value.trim().length >= 3 ? '' : 'Informe ao menos 3 caracteres.');
+    });
+    document.getElementById('email').addEventListener('input', e => {
+      setError('err-email', emailRule.test(e.target.value.trim()) ? '' : 'E-mail inválido.');
+    });
+    document.getElementById('ra').addEventListener('input', e => {
+      const onlyDigits = e.target.value.replace(/\D/g, '');
+      e.target.value = onlyDigits;
+      setError('err-ra', raRule.test(onlyDigits) ? '' : 'Informe ao menos 4 números.');
+    });
+    document.getElementById('turma').addEventListener('change', e => {
+      setError('err-turma', e.target.value ? '' : 'Selecione uma turma.');
+    });
+    document.getElementById('telefone').addEventListener('input', e => {
+      const val = e.target.value.trim();
+      if (val.length === 0) return setError('err-telefone', '');
+      setError('err-telefone', phoneRule.test(val) ? '' : 'Telefone inválido.');
+    });
+
+    // Submissão do formulário
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      clearErrors();
+
+      const nome = document.getElementById('nome').value.trim();
+      const email = document.getElementById('email').value.trim();
+      const ra = document.getElementById('ra').value.trim();
+      const turma = document.getElementById('turma').value;
+      const nascimento = document.getElementById('nascimento').value;
+      const telefone = document.getElementById('telefone').value.trim();
+
+      let hasError = false;
+      if (nome.length < 3) { setError('err-nome', 'Informe ao menos 3 caracteres.'); hasError = true; }
+      if (!emailRule.test(email)) { setError('err-email', 'E-mail inválido.'); hasError = true; }
+      if (!raRule.test(ra)) { setError('err-ra', 'Informe ao menos 4 números.'); hasError = true; }
+      if (!turma) { setError('err-turma', 'Selecione uma turma.'); hasError = true; }
+      if (telefone && !phoneRule.test(telefone)) { setError('err-telefone', 'Telefone inválido.'); hasError = true; }
+      if (hasError) return;
+
+      //  SALVAR NO LOCALSTORAGE
+      const alunos = JSON.parse(localStorage.getItem('alunos') || '[]');
+      const novoAluno = {
+        id: Date.now(),
+        nome,
+        email,
+        ra,
+        turma,
+        nascimento,   // pode ser ''
+        telefone,     // pode ser ''
+        criadoEm: new Date().toISOString()
+      };
+      alunos.push(novoAluno);
+      localStorage.setItem('alunos', JSON.stringify(alunos));
+
+      alert('Aluno cadastrado com sucesso!');
+      window.location.href = 'students.html';
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Cadastrar Professor - Sistema Escolar</title>
+  <link rel="stylesheet" href="assets/css/style.css" />
+</head>
+<body>
+  <!-- Botão tema -->
+  <button id="theme-toggle" class="theme-toggle-btn" title="Alternar tema">
+    <img id="theme-icon"
+         src="https://cdn3.iconfinder.com/data/icons/feather-5/24/moon-512.png"
+         alt="Alternar tema" />
+  </button>
+
+  <!-- Header com logos -->
+  <header class="header">
+    <div class="logo-bar">
+      <img src="https://tivit.com/wp-content/themes/tivit-v2/assets/images/logo-tivit-almaviva.svg" alt="Logo TIVIT" />
+      <img src="https://cursos.jmarc.com.br/images/Logos/Alura_image.png" alt="Logo Alura" />
+      <img src="https://i0.wp.com/innovationweeksjc.com.br/wp-content/uploads/2024/08/Artboard-1.png?fit=800%2C378&ssl=1" alt="Logo FIAP" />
+    </div>
+  </header>
+
+  <!-- Sidebar -->
+  <nav class="sidebar">
+    <ul>
+      <li><a href="dashboard.html">Início</a></li>
+      <li><a href="students.html">Alunos</a></li>
+      <li><a href="add_student.html">Cadastrar Aluno</a></li>
+      <li><a href="teachers.html">Professores</a></li>
+      <li><a href="add_teacher.html">Cadastrar Professor</a></li>
+    </ul>
+  </nav>
+
+  <!-- Conteúdo -->
+  <main class="main-content">
+    <section class="panel">
+      <h2>Cadastrar Professor</h2>
+
+      <form id="teacher-form" novalidate>
+        <!-- Nome -->
+        <label for="nome">Nome completo</label>
+        <input type="text" id="nome" name="nome" placeholder="Ex.: Carlos Andrade" required />
+        <div class="error-message" id="err-nome"></div>
+
+        <!-- Email -->
+        <label for="email">E-mail</label>
+        <input type="email" id="email" name="email" placeholder="prof@exemplo.com" required />
+        <div class="error-message" id="err-email"></div>
+
+        <!-- Registro (ID interno) -->
+        <label for="registro">Registro</label>
+        <input type="text" id="registro" name="registro" inputmode="numeric" placeholder="Somente números" required />
+        <div class="error-message" id="err-registro"></div>
+
+        <!-- Disciplina -->
+        <label for="disciplina">Disciplina</label>
+        <select id="disciplina" name="disciplina" required>
+          <option value="">Selecione...</option>
+          <option value="Matemática">Matemática</option>
+          <option value="Português">Português</option>
+          <option value="Física">Física</option>
+          <option value="Química">Química</option>
+          <option value="História">História</option>
+          <option value="Geografia">Geografia</option>
+          <option value="Biologia">Biologia</option>
+          <option value="Inglês">Inglês</option>
+        </select>
+        <div class="error-message" id="err-disciplina"></div>
+
+        <!-- Telefone (opcional) -->
+        <label for="telefone">Telefone (opcional)</label>
+        <input type="tel" id="telefone" name="telefone" placeholder="(11) 90000-0000" />
+        <div class="error-message" id="err-telefone"></div>
+
+        <button type="submit">Salvar</button>
+      </form>
+    </section>
+  </main>
+
+  <!-- Script: tema + validação + salvar local -->
+  <script>
+    /* ====== TEMA (lua/sol) ====== */
+    const body = document.body;
+    const toggleBtn = document.getElementById('theme-toggle');
+    const themeIcon = document.getElementById('theme-icon');
+
+    function setThemeIcon(theme) {
+      themeIcon.src = (theme === 'dark')
+        ? 'https://cdn3.iconfinder.com/data/icons/meteocons/512/sun-symbol-512.png'
+        : 'https://cdn3.iconfinder.com/data/icons/feather-5/24/moon-512.png';
+    }
+
+    (function initTheme() {
+      const saved = localStorage.getItem('preferred-theme') || 'light';
+      body.classList.remove('light-theme', 'dark-theme');
+      body.classList.add(saved + '-theme');
+      setThemeIcon(saved);
+    })();
+
+    toggleBtn.addEventListener('click', () => {
+      const newTheme = body.classList.contains('dark-theme') ? 'light' : 'dark';
+      body.classList.remove('light-theme', 'dark-theme');
+      body.classList.add(newTheme + '-theme');
+      localStorage.setItem('preferred-theme', newTheme);
+      setThemeIcon(newTheme);
+    });
+
+    /* ====== VALIDAÇÃO + LOCALSTORAGE ====== */
+    const form = document.getElementById('teacher-form');
+
+    const emailRule = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+    const regRule = /^\d{3,}$/; // >=3 dígitos
+    const phoneRule = /^\(?\d{2}\)?\s?\d{4,5}-?\d{4}$/;
+
+    function setError(id, msg){ document.getElementById(id).textContent = msg || ''; }
+    function clearErrors(){
+      ['err-nome','err-email','err-registro','err-disciplina','err-telefone']
+        .forEach(id => setError(id, ''));
+    }
+
+    document.getElementById('nome').addEventListener('input', e => {
+      setError('err-nome', e.target.value.trim().length >= 3 ? '' : 'Informe ao menos 3 caracteres.');
+    });
+    document.getElementById('email').addEventListener('input', e => {
+      setError('err-email', emailRule.test(e.target.value.trim()) ? '' : 'E-mail inválido.');
+    });
+    document.getElementById('registro').addEventListener('input', e => {
+      const onlyDigits = e.target.value.replace(/\D/g, '');
+      e.target.value = onlyDigits;
+      setError('err-registro', regRule.test(onlyDigits) ? '' : 'Mínimo 3 dígitos.');
+    });
+    document.getElementById('disciplina').addEventListener('change', e => {
+      setError('err-disciplina', e.target.value ? '' : 'Selecione uma disciplina.');
+    });
+    document.getElementById('telefone').addEventListener('input', e => {
+      const val = e.target.value.trim();
+      if (!val) return setError('err-telefone', '');
+      setError('err-telefone', phoneRule.test(val) ? '' : 'Telefone inválido.');
+    });
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      clearErrors();
+
+      const nome = document.getElementById('nome').value.trim();
+      const email = document.getElementById('email').value.trim();
+      const registro = document.getElementById('registro').value.trim();
+      const disciplina = document.getElementById('disciplina').value;
+      const telefone = document.getElementById('telefone').value.trim();
+
+      let hasError = false;
+      if (nome.length < 3) { setError('err-nome', 'Informe ao menos 3 caracteres.'); hasError = true; }
+      if (!emailRule.test(email)) { setError('err-email', 'E-mail inválido.'); hasError = true; }
+      if (!regRule.test(registro)) { setError('err-registro', 'Mínimo 3 dígitos.'); hasError = true; }
+      if (!disciplina) { setError('err-disciplina', 'Selecione uma disciplina.'); hasError = true; }
+      if (telefone && !phoneRule.test(telefone)) { setError('err-telefone', 'Telefone inválido.'); hasError = true; }
+      if (hasError) return;
+
+      //  SALVAR
+      const professores = JSON.parse(localStorage.getItem('professores') || '[]');
+      const novo = {
+        id: Date.now(),
+        nome, email, registro, disciplina, telefone,
+        criadoEm: new Date().toISOString()
+      };
+      professores.push(novo);
+      localStorage.setItem('professores', JSON.stringify(professores));
+
+      alert('Professor cadastrado com sucesso!');
+      window.location.href = 'teachers.html';
+    });
+  </script>
+</body>
+</html>
