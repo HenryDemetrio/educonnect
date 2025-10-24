@@ -3,10 +3,16 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Dashboard - Sistema Escolar</title>
+  <title>Dashboard - EduConnect</title>
   <link rel="stylesheet" href="assets/css/style.css" />
 </head>
 <body>
+  <!-- Logo EduConnect (claro/escuro) -->
+  <div class="brand-badge top-left">
+    <img class="logo-light" src="assets/images/educonnect-logo.svg" alt="Logo EduConnect">
+    <img class="logo-dark"  src="assets/images/educonnect-logo-dark.svg" alt="Logo EduConnect">
+  </div>
+
   <!-- Botão flutuante de tema (lua/sol) -->
   <button id="theme-toggle" class="theme-toggle-btn" title="Alternar tema">
     <img id="theme-icon"
@@ -32,33 +38,134 @@
       <li><a href="teachers.html">Professores</a></li>
       <li><a href="add_teacher.html">Cadastrar Professor</a></li>
     </ul>
+
+      <!-- Voltar ao login -->
+      <!-- Ação rápida: sair -->
+      <a class="logout-ghost" href="index.html" title="Sair">
+      <!-- ícone setinha -->
+      <span aria-hidden="true">⟵</span>
+      <span>Sair</span>
+      </a>
   </nav>
 
   <!-- Conteúdo principal -->
   <main class="main-content">
+    <!-- Gráfico -->
     <section class="panel">
       <h2>Gráfico de Desempenho</h2>
-      <!-- Canvas do gráfico (substitui o placeholder) -->
       <div style="height: 320px;">
         <canvas id="chartAlunosPorTurma"></canvas>
       </div>
     </section>
 
+    <!-- Notificações -->
     <section class="panel">
       <h2>Notificações</h2>
-      <div class="placeholder">[Lista de notificações aqui]</div>
+
+      <!-- Form de criação (com perfil e turma) -->
+      <form id="notif-form" class="notif-form" autocomplete="off">
+        <input id="notif-title" type="text" placeholder="Título da notificação" required />
+
+        <div class="notif-form-row">
+          <select id="notif-role">
+            <option value="all">Destinatário: Todos</option>
+            <option value="students">Alunos</option>
+            <option value="teachers">Professores</option>
+          </select>
+
+          <select id="notif-class">
+            <option value="all">Turma: Todas</option>
+            <option value="1A">1º Ano - A</option>
+            <option value="1B">1º Ano - B</option>
+            <option value="2A">2º Ano - A</option>
+            <option value="2B">2º Ano - B</option>
+            <option value="3A">3º Ano - A</option>
+            <option value="3B">3º Ano - B</option>
+          </select>
+        </div>
+
+        <textarea id="notif-message" rows="2" placeholder="Mensagem..." required></textarea>
+        <button type="submit">Adicionar</button>
+      </form>
+
+      <!-- Barra de filtros -->
+      <div class="notif-toolbar">
+        <input id="notif-search" type="text" placeholder="Buscar por texto..." />
+        <select id="notif-range">
+          <option value="all">Todas</option>
+          <option value="today">Hoje</option>
+          <option value="week">Esta semana</option>
+        </select>
+        <select id="filter-role">
+          <option value="all">Todos os perfis</option>
+          <option value="students">Alunos</option>
+          <option value="teachers">Professores</option>
+        </select>
+        <select id="filter-class">
+          <option value="all">Todas as turmas</option>
+          <option value="1A">1º Ano - A</option>
+          <option value="1B">1º Ano - B</option>
+          <option value="2A">2º Ano - A</option>
+          <option value="2B">2º Ano - B</option>
+          <option value="3A">3º Ano - A</option>
+          <option value="3B">3º Ano - B</option>
+        </select>
+        <button id="notif-clear">Limpar tudo</button>
+      </div>
+
+      <!-- Lista -->
+      <ul id="notif-list" class="notif-list"></ul>
+
+      <!-- Mensagem vazia -->
+      <p id="notif-empty" class="notif-empty" style="display:none;">Nenhuma notificação.</p>
     </section>
 
+    <!-- Calendário -->
     <section class="panel">
-      <h2>Calendário Escolar</h2>
-      <div class="placeholder">[Calendário interativo aqui]</div>
-    </section>
+  <h2>Calendário Escolar</h2>
+
+  <!-- Cabeçalho do calendário -->
+  <div class="cal-header">
+    <button id="cal-prev" aria-label="Mês anterior">◀</button>
+    <div class="cal-current">
+      <span id="cal-month"></span>
+      <span id="cal-year"></span>
+    </div>
+    <button id="cal-next" aria-label="Próximo mês">▶</button>
+  </div>
+
+  <!-- Grade do calendário -->
+  <div class="cal-grid">
+    <div class="cal-weekday">Seg</div>
+    <div class="cal-weekday">Ter</div>
+    <div class="cal-weekday">Qua</div>
+    <div class="cal-weekday">Qui</div>
+    <div class="cal-weekday">Sex</div>
+    <div class="cal-weekday">Sáb</div>
+    <div class="cal-weekday">Dom</div>
+    <!-- Dias são inseridos via JS -->
+    <div id="cal-days" class="cal-days"></div>
+  </div>
+
+  <!-- Eventos do dia selecionado -->
+  <div class="cal-events">
+    <div class="cal-events-head">
+      <h3 id="cal-selected-label">Eventos do dia</h3>
+      <form id="cal-event-form" class="cal-event-form" autocomplete="off">
+        <input id="cal-event-title" type="text" placeholder="Novo evento (título)" required />
+        <button type="submit">Adicionar</button>
+      </form>
+    </div>
+    <ul id="cal-event-list" class="cal-event-list"></ul>
+    <p id="cal-event-empty" class="cal-event-empty" style="display:none;">Sem eventos para este dia.</p>
+  </div>
+</section>
   </main>
 
   <!-- CDN Chart.js -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-  <!-- Script: tema (lua/sol) + gráfico que reage ao tema e ao localStorage -->
+  <!-- Script: tema (lua/sol) + gráfico + notificações -->
   <script>
     /* ========= TEMA (lua/sol) ========= */
     const body = document.body;
@@ -67,8 +174,8 @@
 
     function setThemeIcon(theme) {
       themeIcon.src = (theme === 'dark')
-        ? 'https://cdn3.iconfinder.com/data/icons/meteocons/512/sun-symbol-512.png'  // Sol
-        : 'https://cdn3.iconfinder.com/data/icons/feather-5/24/moon-512.png';       // Lua
+        ? 'https://cdn3.iconfinder.com/data/icons/meteocons/512/sun-symbol-512.png'
+        : 'https://cdn3.iconfinder.com/data/icons/feather-5/24/moon-512.png';
     }
 
     (function initTheme() {
@@ -84,7 +191,7 @@
       body.classList.add(newTheme + '-theme');
       localStorage.setItem('preferred-theme', newTheme);
       setThemeIcon(newTheme);
-      updateChartTheme(newTheme); // atualiza paleta do gráfico ao trocar tema
+      updateChartTheme(newTheme);
     });
 
     /* ========= GRÁFICO (Alunos por Turma) ========= */
@@ -102,8 +209,8 @@
 
     function themeColors(theme) {
       return {
-        bg: 'rgba(215, 23, 47, 0.25)',           // barra com transparência
-        border: '#d7172f',                        // vermelho TIVIT
+        bg: 'rgba(215, 23, 47, 0.25)',
+        border: '#d7172f',
         grid: theme === 'dark' ? '#333' : '#e5e5e5',
         ticks: theme === 'dark' ? '#eeeeee' : '#333333'
       };
@@ -133,9 +240,7 @@
         maintainAspectRatio: false,
         plugins: {
           legend: { labels: { color: colors.ticks, font: { weight: 'bold' } } },
-          tooltip: {
-            callbacks: { label: (ctx) => ` ${ctx.parsed.y} aluno(s)` }
-          }
+          tooltip: { callbacks: { label: (ctx) => ` ${ctx.parsed.y} aluno(s)` } }
         },
         scales: {
           x: { ticks: { color: colors.ticks }, grid: { color: colors.grid } },
@@ -160,11 +265,350 @@
       chartRef.update();
     }
 
-    // Renderiza ao carregar
     window.addEventListener('load', renderChart);
-
-    // Re-render quando a aba volta ao foco (ex.: após cadastrar aluno)
     window.addEventListener('focus', renderChart);
+
+    /* ========= NOTIFICAÇÕES ========= */
+    const notifKey = 'notifications';
+
+    const $notifForm = document.getElementById('notif-form');
+    const $title     = document.getElementById('notif-title');
+    const $message   = document.getElementById('notif-message');
+    const $roleSel   = document.getElementById('notif-role');
+    const $classSel  = document.getElementById('notif-class');
+
+    const $list      = document.getElementById('notif-list');
+    const $empty     = document.getElementById('notif-empty');
+
+    const $search    = document.getElementById('notif-search');
+    const $range     = document.getElementById('notif-range');
+    const $fRole     = document.getElementById('filter-role');
+    const $fClass    = document.getElementById('filter-class');
+    const $clearBtn  = document.getElementById('notif-clear');
+
+    function getNotifs(){
+      try { return JSON.parse(localStorage.getItem(notifKey) || '[]'); }
+      catch { return []; }
+    }
+    function setNotifs(arr){
+      localStorage.setItem(notifKey, JSON.stringify(arr));
+    }
+
+    function fmtDate(iso){
+      const d = new Date(iso);
+      return d.toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' });
+    }
+    function isToday(iso){
+      const d = new Date(iso), n = new Date();
+      return d.toDateString() === n.toDateString();
+    }
+    function isThisWeek(iso){
+      const d = new Date(iso);
+      const now = new Date();
+      const day = (now.getDay()+6)%7; // semana começa na segunda
+      const monday = new Date(now); monday.setDate(now.getDate()-day); monday.setHours(0,0,0,0);
+      const sunday = new Date(monday); sunday.setDate(monday.getDate()+6); sunday.setHours(23,59,59,999);
+      return d >= monday && d <= sunday;
+    }
+
+    function roleLabel(v){
+      if (v === 'students') return 'Alunos';
+      if (v === 'teachers') return 'Professores';
+      return 'Todos';
+    }
+    function classLabel(v){
+      return v === 'all' ? 'Todas as turmas' : `Turma ${v}`;
+    }
+
+    function escapeHtml(str){
+      return String(str).replace(/[&<>"']/g, s => ({
+        '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+      }[s]));
+    }
+
+    function renderNotifs(){
+      const q = ($search.value||'').toLowerCase();
+      const range = $range.value;
+      const fr = $fRole.value;
+      const fc = $fClass.value;
+
+      let data = getNotifs();
+
+      if (q) data = data.filter(n =>
+        n.title.toLowerCase().includes(q) || n.message.toLowerCase().includes(q)
+      );
+      if (range === 'today') data = data.filter(n => isToday(n.createdAt));
+      if (range === 'week')  data = data.filter(n => isThisWeek(n.createdAt));
+      if (fr !== 'all')      data = data.filter(n => n.role === fr);
+      if (fc !== 'all')      data = data.filter(n => n.class === fc);
+
+      data.sort((a,b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+      $list.innerHTML = '';
+      if (!data.length){
+        $empty.style.display = 'block';
+        return;
+      }
+      $empty.style.display = 'none';
+
+      for (const n of data){
+        const li = document.createElement('li');
+        li.className = 'notif-card';
+        li.innerHTML = `
+          <div>
+            <h4>${escapeHtml(n.title)}</h4>
+            <div class="notif-meta">${fmtDate(n.createdAt)}</div>
+            <div class="notif-badges">
+              <span class="badge">${roleLabel(n.role)}</span>
+              <span class="badge">${classLabel(n.class)}</span>
+            </div>
+            <div>${escapeHtml(n.message)}</div>
+          </div>
+          <div class="notif-actions">
+            <button data-del="${n.id}">Excluir</button>
+          </div>
+        `;
+        $list.appendChild(li);
+      }
+    }
+
+    $notifForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const title = $title.value.trim();
+      const message = $message.value.trim();
+      const role = $roleSel.value;
+      const klass = $classSel.value;
+      if (!title || !message) return;
+
+      const arr = getNotifs();
+      arr.push({
+        id: Date.now(),
+        title, message,
+        role,
+        class: klass,
+        createdAt: new Date().toISOString()
+      });
+      setNotifs(arr);
+
+      $title.value = '';
+      $message.value = '';
+      $roleSel.value = 'all';
+      $classSel.value = 'all';
+
+      renderNotifs();
+    });
+
+    document.getElementById('notif-list').addEventListener('click', (e) => {
+      const id = e.target?.dataset?.del;
+      if (!id) return;
+      const arr = getNotifs().filter(n => String(n.id) !== String(id));
+      setNotifs(arr);
+      renderNotifs();
+    });
+
+    $search.addEventListener('input', renderNotifs);
+    $range.addEventListener('change', renderNotifs);
+    $fRole.addEventListener('change', renderNotifs);
+    $fClass.addEventListener('change', renderNotifs);
+
+    document.getElementById('notif-clear').addEventListener('click', () => {
+      if (!confirm('Apagar todas as notificações?')) return;
+      setNotifs([]);
+      renderNotifs();
+    });
+
+    window.addEventListener('load', renderNotifs);
+
+  /* ========= CALENDÁRIO ========= */
+  const calKey = 'calendarEvents'; // { "YYYY-MM-DD": [{id,title,createdAt}] }
+
+  const $calPrev   = document.getElementById('cal-prev');
+  const $calNext   = document.getElementById('cal-next');
+  const $calMonth  = document.getElementById('cal-month');
+  const $calYear   = document.getElementById('cal-year');
+  const $calDays   = document.getElementById('cal-days');
+
+  const $dayLabel  = document.getElementById('cal-selected-label');
+  const $evForm    = document.getElementById('cal-event-form');
+  const $evTitle   = document.getElementById('cal-event-title');
+  const $evList    = document.getElementById('cal-event-list');
+  const $evEmpty   = document.getElementById('cal-event-empty');
+
+  // estado do calendário
+  let calYearState, calMonthState; // 0-11
+  let selectedDateISO; // "YYYY-MM-DD"
+
+  function pad2(n){ return String(n).padStart(2,'0'); }
+  function toISO(y,m,d){ return `${y}-${pad2(m+1)}-${pad2(d)}`; }
+
+  function getCalStore(){
+    try { return JSON.parse(localStorage.getItem(calKey) || '{}'); }
+    catch { return {}; }
+  }
+  function setCalStore(obj){
+    localStorage.setItem(calKey, JSON.stringify(obj));
+  }
+
+  const monthNames = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+
+  function buildCalendar(y, m){
+    // cabeçalho
+    $calMonth.textContent = monthNames[m];
+    $calYear.textContent = y;
+
+    // datas de apoio
+    const first = new Date(y, m, 1);
+    const last  = new Date(y, m+1, 0);
+    const startWeekday = (first.getDay()+6)%7; // seg=0 ... dom=6
+    const daysInMonth = last.getDate();
+
+    // dia anterior para preencher início
+    const prevLast = new Date(y, m, 0).getDate();
+
+    $calDays.innerHTML = '';
+    const store = getCalStore();
+    const todayISO = toISO(new Date().getFullYear(), new Date().getMonth(), new Date().getDate());
+
+    // preencher “vazios” do mês anterior
+    for (let i = 0; i < startWeekday; i++){
+      const d = prevLast - startWeekday + 1 + i;
+      const iso = toISO(y, m-1, d);
+      $calDays.appendChild(dayCell(d, iso, true, store, todayISO));
+    }
+
+    // dias do mês corrente
+    for (let d = 1; d <= daysInMonth; d++){
+      const iso = toISO(y, m, d);
+      $calDays.appendChild(dayCell(d, iso, false, store, todayISO));
+    }
+
+    // completar até 6 linhas (42 células)
+    const totalCells = $calDays.children.length;
+    for (let i = totalCells; i < 42; i++){
+      const d = i - totalCells + 1;
+      const iso = toISO(y, m+1, d);
+      $calDays.appendChild(dayCell(d, iso, true, store, todayISO));
+    }
+  }
+
+  function dayCell(number, iso, isOut, store, todayISO){
+    const cell = document.createElement('div');
+    cell.className = 'cal-day' + (isOut ? ' out' : '');
+    if (iso === todayISO) cell.classList.add('today');
+    if (iso === selectedDateISO) cell.classList.add('selected');
+
+    const num = document.createElement('div');
+    num.className = 'num';
+    num.textContent = number;
+    cell.appendChild(num);
+
+    // pills com até 2 eventos
+    const events = store[iso] || [];
+    for (let i = 0; i < Math.min(events.length, 2); i++){
+      const pill = document.createElement('div');
+      pill.className = 'pill';
+      pill.style.bottom = `${8 + i*22}px`;
+      pill.textContent = events[i].title;
+      cell.appendChild(pill);
+    }
+
+    cell.addEventListener('click', () => {
+      selectedDateISO = iso;
+      renderEventPanel();
+      // atualizar seleção visual
+      [...$calDays.children].forEach(c => c.classList.remove('selected'));
+      cell.classList.add('selected');
+    });
+
+    return cell;
+  }
+
+  function renderEventPanel(){
+    if (!selectedDateISO){
+      const now = new Date();
+      selectedDateISO = toISO(now.getFullYear(), now.getMonth(), now.getDate());
+    }
+    const [y,m,d] = selectedDateISO.split('-');
+    $dayLabel.textContent = `Eventos de ${d}/${m}/${y}`;
+
+    const store = getCalStore();
+    const items = store[selectedDateISO] || [];
+
+    $evList.innerHTML = '';
+    if (!items.length){
+      $evEmpty.style.display = 'block';
+      return;
+    }
+    $evEmpty.style.display = 'none';
+
+    for (const it of items){
+      const li = document.createElement('li');
+      li.className = 'cal-event-item';
+      li.innerHTML = `
+        <div>
+          <div><strong>${escapeHtml(it.title)}</strong></div>
+          <div class="meta">${new Date(it.createdAt).toLocaleString('pt-BR')}</div>
+        </div>
+        <button data-del="${it.id}">Excluir</button>
+      `;
+      $evList.appendChild(li);
+    }
+  }
+
+  // reutiliza helper de escape do bloco de notificações, se existir
+  function escapeHtml(str){
+    return String(str).replace(/[&<>"']/g, s => ({
+      '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+    }[s]));
+  }
+
+  // handlers
+  $calPrev.addEventListener('click', () => {
+    if (calMonthState === 0){ calMonthState = 11; calYearState--; }
+    else calMonthState--;
+    buildCalendar(calYearState, calMonthState);
+  });
+  $calNext.addEventListener('click', () => {
+    if (calMonthState === 11){ calMonthState = 0; calYearState++; }
+    else calMonthState++;
+    buildCalendar(calYearState, calMonthState);
+  });
+
+  $evForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const title = $evTitle.value.trim();
+    if (!title) return;
+    const store = getCalStore();
+    const list = store[selectedDateISO] || [];
+    list.push({ id: Date.now(), title, createdAt: new Date().toISOString() });
+    store[selectedDateISO] = list;
+    setCalStore(store);
+    $evTitle.value = '';
+    buildCalendar(calYearState, calMonthState); // atualiza pills
+    renderEventPanel();                          // atualiza lista
+  });
+
+  $evList.addEventListener('click', (e) => {
+    const id = e.target?.dataset?.del;
+    if (!id) return;
+    const store = getCalStore();
+    store[selectedDateISO] = (store[selectedDateISO] || []).filter(ev => String(ev.id) !== String(id));
+    setCalStore(store);
+    buildCalendar(calYearState, calMonthState);
+    renderEventPanel();
+  });
+
+  // init calendário (mês atual + seleciona hoje)
+  (function initCalendar(){
+    const now = new Date();
+    calYearState = now.getFullYear();
+    calMonthState = now.getMonth();
+    selectedDateISO = toISO(calYearState, calMonthState, now.getDate());
+    buildCalendar(calYearState, calMonthState);
+    renderEventPanel();
+  })();
+
+
   </script>
 </body>
 </html>
