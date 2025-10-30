@@ -28,47 +28,6 @@ projeto/
 │   │   └── script.js       -> Arquivo **JavaScript** principal (interatividade: tema, validações, etc.)
 │   └── images/             -> Pasta para **imagens** (logos, ícones, etc. caso necessário)
 
-
-🧱 Estrutura de Interface
-
-✅ Página de Login responsiva (index.html)
-
-✅ Dashboard com menu de navegação (dashboard.html)
-
- Tema claro/escuro com botão de alternância
-
-📋 Listagens e Formulários
-
- Página de Cadastro de Aluno com formulário validado
-
- Página de Listagem de Alunos com tabela e filtro
-
- Página de Cadastro de Professor com formulário validado
-
- Página de Listagem de Professores com tabela e filtro
-
-✨ Interatividade
-
-✅ Validação de formulário de login com JavaScript
-
- Validação de cadastro de aluno e professor com JavaScript
-
- Gráfico de desempenho (ex: notas ou frequência com Chart.js)
-
- Sistema de notificações (mensagens simples no dashboard)
-
- Calendário escolar interativo
-
-🎨 Identidade Visual
-
- ✅ Paleta de cores baseada no vermelho da TIVIT
-
- ✅ Logos da TIVIT, FIAP e Alura adicionados
-
- Ícones ou imagens adicionais para reforçar o visual
-
-🌟 Opcionais (extras que agregam valor)
-
  Tema escuro com localStorage
 
  Feedback visual após submissão de formulário
