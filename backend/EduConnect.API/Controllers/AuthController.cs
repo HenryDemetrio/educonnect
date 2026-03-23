@@ -31,7 +31,8 @@ namespace EduConnect.API.Controllers
         [AllowAnonymous]
         public IActionResult Login([FromBody] LoginRequest req)
         {
-            var user = _ctx.Usuarios.FirstOrDefault(u => u.Email == req.Email);
+            var email = (req.Email ?? "").Trim().ToLowerInvariant();
+            var user = _ctx.Usuarios.FirstOrDefault(u => u.Email.ToLower() == email);
             if (user == null) return Unauthorized(new { message = "Credenciais inválidas" });
 
             var ok = BCrypt.Net.BCrypt.Verify(req.Senha, user.SenhaHash);

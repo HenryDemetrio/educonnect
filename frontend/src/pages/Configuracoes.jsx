@@ -134,7 +134,7 @@ export default function Configuracoes() {
 
               <div className="form-footer" style={{ justifyContent: "space-between" }}>
                 {/* Ajusta esse path pro seu "esqueci senha" real */}
-                <Link to="/esqueci-senha" className="settings-link">
+                <Link to="/recuperar-senha" className="settings-link">
                   Esqueci minha senha
                 </Link>
 

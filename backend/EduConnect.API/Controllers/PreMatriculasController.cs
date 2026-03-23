@@ -12,6 +12,16 @@ namespace EduConnect.API.Controllers;
 [Route("pre-matriculas")]
 public class PreMatriculasController : ControllerBase
 {
+    private const long MaxUploadBytes = 10 * 1024 * 1024;
+    private static readonly HashSet<string> AllowedDocExts = new(StringComparer.OrdinalIgnoreCase) { ".pdf", ".png", ".jpg", ".jpeg" };
+
+    private static bool UploadValido(IFormFile file)
+    {
+        if (file == null || file.Length <= 0 || file.Length > MaxUploadBytes) return false;
+        var ext = Path.GetExtension(file.FileName);
+        return AllowedDocExts.Contains(ext);
+    }
+
     private readonly EduConnectContext _ctx;
     private readonly IWebHostEnvironment _env;
 
@@ -71,6 +81,9 @@ public class PreMatriculasController : ControllerBase
         if (req.RgCpf == null || req.Escolaridade == null)
             return BadRequest(new { message = "Envie RG/CPF e Escolaridade." });
 
+        if (!UploadValido(req.RgCpf) || !UploadValido(req.Escolaridade))
+            return BadRequest(new { message = "Arquivos inválidos. Envie PDF/JPG/PNG com até 10 MB." });
+
         var baseDir = Path.Combine(_env.ContentRootPath, "wwwroot", "uploads", "pre-matriculas", id.ToString());
         Directory.CreateDirectory(baseDir);
 
@@ -103,6 +116,9 @@ public class PreMatriculasController : ControllerBase
 
         if (req.Comprovante == null)
             return BadRequest(new { message = "Envie o comprovante." });
+
+        if (!UploadValido(req.Comprovante))
+            return BadRequest(new { message = "Arquivo inválido. Envie PDF/JPG/PNG com até 10 MB." });
 
         var baseDir = Path.Combine(_env.ContentRootPath, "wwwroot", "uploads", "pre-matriculas", id.ToString());
         Directory.CreateDirectory(baseDir);

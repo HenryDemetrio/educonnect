@@ -120,8 +120,11 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-// cria um admin padrão se não existir
-SeedAdmin(app);
+// cria um admin padrão se não existir (somente em desenvolvimento)
+if (app.Environment.IsDevelopment())
+{
+    SeedAdmin(app);
+}
 
 app.Run();
 
