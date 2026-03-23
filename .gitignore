@@ -33,3 +33,10 @@ appsettings.Local.json
 appsettings.*.Development.json
 *.sqlite
 *.db
+
+# EduConnect repo hygiene
+**/.vs/
+**/wwwroot/uploads/
+frontend/.env
+frontend/.env.local
+backend/EduConnect.API/wwwroot/uploads/
