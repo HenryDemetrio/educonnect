@@ -49,7 +49,7 @@ namespace EduConnect.API.Controllers
             {
                 Nome = req.Nome.Trim(),
                 Email = emailInstitucional,
-                SenhaHash = BCrypt.Net.BCrypt.HashPassword("TEMPORARIO_INVALIDO"),
+                SenhaHash = BCrypt.Net.BCrypt.HashPassword(accessSvc.GenerateTempPassword(24)),
                 Role = "Professor"
             };
 

@@ -200,8 +200,9 @@ export default function AppHeader() {
                   className="btn-secondary btn-inline"
                   onClick={() => {
                     setNotifOpen(false);
-                    // aluno vê diretas no painel; prof/admin podem ver também lá se quiser
-                    navigate("/meu-painel");
+                    if (me?.role === "Aluno") navigate("/meu-painel");
+                    else if (me?.role === "Professor") navigate("/professor/agenda");
+                    else navigate("/admin/agenda");
                   }}
                 >
                   Ver todas
